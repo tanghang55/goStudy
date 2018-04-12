@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "web/routers"
+	_ "goStudy/routers"
 	"github.com/astaxie/beego"
 )
 
