@@ -6,6 +6,7 @@ import (
 	"goStudy/libs"
 	"time"
 	"strings"
+	//"strconv"
 	"strconv"
 )
 
@@ -35,8 +36,8 @@ func (b *BaseController) LoginAdmin() string {
 			user.LastIp = b.getClientIp()
 			user.LastLogin = time.Now().Unix()
 			user.Update()
-			authkey := libs.Md5([]byte(b.getClientIp() + "|" + user.Password + user.Salt))
-			b.Ctx.SetCookie("auth", strconv.Itoa(user.Id)+"|"+authkey, 7*86400)
+			authKey := libs.Md5([]byte(user.LastIp + "|" + user.Password + user.Salt))
+			b.Ctx.SetCookie("auth", strconv.Itoa(user.Id)+"|"+authKey, 7*86400)
 			b.redirect(beego.URLFor("HomeController.Index"))
 		}
 	}
