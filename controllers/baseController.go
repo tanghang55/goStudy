@@ -59,11 +59,10 @@ func (b *BaseController) auth() {
 				b.userId = user.Id
 				b.userName = user.LoginName
 				b.admin = user
-				//b.AdminAuth()
+				b.AdminAuth()
 			}
 			//isHasAuth:= strings.Contains(b.allowUrl,b.controllerName+"/"+b.actionName)
 			noAuth := "ajaxsave/ajaxdel/table/login/loginout/getnodes/start/show/ajaxapisave/index/group/public/env/code/apidetail"
-			fmt.Println(b.actionName)
 			isNoAuth := strings.Contains(noAuth, b.actionName)
 			if isNoAuth == false {
 				b.Ctx.WriteString("没有权限")
@@ -80,13 +79,50 @@ func (b *BaseController) auth() {
 
 //admin权限
 func (b *BaseController) AdminAuth() {
+	//菜单
+	role := models.RoleAuth{}
+	auth := models.Auth{}
 	filters := make([]interface{}, 0)
 	filters = append(filters, "status", 1)
-
-	//b.userName!="admin"{
-	//	//非超级管理员
-	//	adminAuthIds,_:=m
-	//}
+	if b.userName != "admin" {
+		adminAuthIds, _ := role.RoleAuthGetByIds(b.admin.RoleIds)
+		filters = append(filters, "id__in", adminAuthIds)
+	}
+	result, _ := auth.AuthGetList(1, 1000, filters...)
+	list := make([]map[string]interface{}, len(result))
+	list2 := make([]map[string]interface{}, len(result))
+	allow_url := ""
+	i, j := 0, 0
+	for _, v := range result {
+		if v.AuthUrl != " " || v.AuthUrl != "/" {
+			allow_url += v.AuthUrl
+		}
+		row := make(map[string]interface{})
+		if v.Pid == 1 && v.IsShow == 1 {
+			row["Id"] = int(v.Id)
+			row["Sort"] = v.Sort
+			row["AuthName"] = v.AuthName
+			row["AuthUrl"] = v.AuthUrl
+			row["Icon"] = v.Icon
+			row["Pid"] = int(v.Pid)
+			list[i] = row
+			i++
+		}
+		if v.Pid != 1 && v.IsShow == 1 {
+			row["Id"] = int(v.Id)
+			row["Sort"] = v.Sort
+			row["AuthName"] = v.AuthName
+			row["AuthUrl"] = v.AuthUrl
+			row["Icon"] = v.Icon
+			row["Pid"] = int(v.Pid)
+			list2[j] = row
+			j++
+		}
+	}
+	fmt.Println(list[:i],"菜单")
+	b.Data["SideMenu1"] = list[:i]  //一级菜单
+	b.Data["SideMenu2"] = list2[:j] //二级菜单
+	b.allowUrl = allow_url + "/home/index"
 }
 
 //登录
