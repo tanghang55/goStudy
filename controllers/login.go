@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	"fmt"
 )
 
 type LoginController struct {
@@ -9,7 +10,7 @@ type LoginController struct {
 }
 
 func (l *LoginController) Login() {
-	if l.admin.Id > 0 {
+	if l.userId > 0 {
 		l.redirect(beego.URLFor("HomeController.Index"))
 	}
 	beego.ReadFromRequest(&l.Controller)
@@ -20,5 +21,7 @@ func (l *LoginController) Login() {
 		flash.Store(&l.Controller)
 		l.redirect(beego.URLFor("LoginController.Login"))
 	}
+	fmt.Println(2)
+
 	l.TplName = "login/login.html"
 }

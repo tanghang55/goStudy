@@ -23,12 +23,13 @@ type Admin struct {
 }
 
 func init() {
-	selectDb = "db1"   //选库
+	selectDb = "db" //选库
 }
 func (a *Admin) TableName() string {
 	// db table name
 	return TablesName("uc_admin")
 }
+
 //按用户名查询信息
 func (a *Admin) GetUser(name string) (*Admin, error) {
 	err := orm.NewOrm().QueryTable(a.TableName()).Filter("login_name", name).One(a)
@@ -36,6 +37,15 @@ func (a *Admin) GetUser(name string) (*Admin, error) {
 		return nil, err
 	}
 	return a, err
+}
+
+//按用户id查询信息
+func (a *Admin) FindIdUser(id int) (*Admin, error) {
+	err := orm.NewOrm().QueryTable(a.TableName()).Filter("id", id).One(a)
+	if err != nil {
+		return nil, err
+	}
+	return a, nil
 }
 
 //更新用户信息

@@ -5,7 +5,6 @@ import (
 	"net/url"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"fmt"
 )
 
 var selectDb string ="db"
@@ -22,7 +21,6 @@ func init() {
 	if dbTimeZone != "" {
 		dsn += "&loc" + url.QueryEscape(dbTimeZone)
 	}
-	fmt.Println(dsn)
 	orm.RegisterDataBase("default", "mysql", dsn)
 	orm.RegisterModel(new(Admin))
 	if beego.AppConfig.String("runmode") == "dev" {
